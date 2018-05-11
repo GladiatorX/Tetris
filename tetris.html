@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    background-color: #444;
+
+}  
+
+td{
+height:20px;
+width:20px;
+}
+
+tr.collapse {
+    visibility: hidden;
+}
+</style>
+
+</head>
+<body>
+
+<script>
+"use strict";
+//global
+var var_1,var_2,var_3,var_4;
+var max_i;
+var grep_row=null;
+var rowWise=null;
+var table;
+var rowCount;
+var colCount = null;
+var applyColor;
+var curShape,nextShape;
+var piecePos;
+var loop;
+var curShapes_array =[];
+var main_array =[];
+
+//main_array.push(" ");
+var move_right=true;
+var move_left=true;
+var line_shape={piece_1:[],piece_2:[],piece_3:[],piece_4:[],color:null,stop_down:false};
+var Z_shape={piece_1:[],piece_2:[],piece_3:[],piece_4:[],color:null,stop_down:false};
+var box_shape={piece_1:[],piece_2:[],piece_3:[],piece_4:[],color:null,stop_down:false};
+var T_shape={piece_1:[],piece_2:[],piece_3:[],piece_4:[],color:null,stop_down:false};
+var L_shape={piece_1:[],piece_2:[],piece_3:[],piece_4:[],color:null,stop_down:false};
+var ulta7_shape={piece_1:[],piece_2:[],piece_3:[],piece_4:[],color:null,stop_down:false};
+var S_shape={piece_1:[],piece_2:[],piece_3:[],piece_4:[],color:null,stop_down:false};
+var i=0;
+var j=0;	
+var z=0;
+
+
+	var boxTable,tr,td;
+
+
+function myFunction() {
+    location.reload();
+}
+
+
+		function mainLoop(){
+
+		//console.log("draw pos  = "+curShape.piece_1[1]+"  pos = "+curShape.piece_2[1]+"  pos = "+curShape.piece_3[1]+" pos = "+curShape.piece_4[1]);
+		//alert("update pos  = "+curShape.piece_1[0]+"  pos = "+curShape.piece_2[0]+"  pos = "+curShape.piece_3[0]+" pos = "+curShape.piece_4[0]);
+
+		var table = document.getElementById("playArea");
+		grep_row=table.rows;		//holds a row
+		rowWise=grep_row[0].cells
+		rowCount=grep_row.length;//16
+		//console.log(main_array.toString());
+		 colCount= document.getElementById("playArea").rows[0].cells.length;	//10
+		console.log("rows "+rowCount+"cells : "+colCount);
+			//initial pos
+		 piecePos = (colCount/2)-1		;
+		curShape = generateNewShape();
+		nextShape = generateNewShape();			//nxt
+		displayNextBlock();	
+		loop = setInterval(run,350);
+
+		}
+
+		function run(){
+
+			stop_down();
+				if(curShape.stop_down==true)
+				{ 
+					clearNewShapeBlock();
+					//curShape=generateNewShape();
+					curShape= nextShape;
+				//	nextShape = generateNewShape();			//nxt
+
+		displayNextBlock();	
+				
+				}
+			update();	
+			//stop_down();
+			draw();
+			
+		}									
+														
+	function displayNextBlock()
+	{
+		nextShape = generateNewShape();	
+
+
+		boxTable = document.getElementById("nextBlock");
+		tr=boxTable.rows;		//holds a row
+		/*
+		var	 colCount= document.getElementById("nextBlock").rows[0].cells.length;	//10
+		var piecePos = (colCount/2)-1;
+		 td=tr[0].cells;
+		console.log("cells : "+colCount+"piece: "+piecePos+"td: "+td);
+		td= tr[0].cells;
+	*/
+
+		td = tr[nextShape.piece_1[0]].cells;
+		td[nextShape.piece_1[1]].style.backgroundColor=nextShape.color;
+
+		td = tr[nextShape.piece_2[0]].cells;	
+		td[nextShape.piece_2[1]].style.backgroundColor=nextShape.color;
+		
+		td = tr[nextShape.piece_3[0]].cells;
+		td[nextShape.piece_3[1]].style.backgroundColor=nextShape.color;
+		
+		td = tr[nextShape.piece_4[0]].cells;
+		td[nextShape.piece_4[1]].style.backgroundColor=nextShape.color;
+
+		
+		console.log("i m display log"+nextShape);
+	}
+
+	function clearNewShapeBlock(){
+		
+		td = tr[nextShape.piece_1[0]].cells;
+		td[nextShape.piece_1[1]].style.backgroundColor="#444";
+
+		td = tr[nextShape.piece_2[0]].cells;	
+		td[nextShape.piece_2[1]].style.backgroundColor="#444";
+		
+		td = tr[nextShape.piece_3[0]].cells;
+		td[nextShape.piece_3[1]].style.backgroundColor="#444";
+		
+		td = tr[nextShape.piece_4[0]].cells;
+		td[nextShape.piece_4[1]].style.backgroundColor="#444";
+
+		
+	
+	}
+	
+	function stop_down(){		
+	//main_array.valueOf(curShape.piece_1[0]+":"+curShape.piece_1[1]);
+	max_i=Math.max(curShape.piece_1[0],curShape.piece_2[0],curShape.piece_3[0],curShape.piece_4[0]);
+	if(max_i != rowCount-1)
+					{
+					console.log("loopn pavta var_1!!");
+					
+						
+					var_1=main_array.indexOf(curShape.piece_1[0]+1+":"+curShape.piece_1[1]);
+					var_2=main_array.indexOf(curShape.piece_2[0]+1+":"+curShape.piece_2[1]);
+					var_3=main_array.indexOf(curShape.piece_3[0]+1+":"+curShape.piece_3[1]);
+					var_4=main_array.indexOf(curShape.piece_4[0]+1+":"+curShape.piece_4[1]);
+					
+					
+				if ( (var_1 != -1 )|| (var_2 != -1 )||( var_3 != -1)||( var_4 != -1) ){	
+							//	alert(" found"); 						
+								storeBlockValues();	
+								checkRowClearLine();
+								curShape.stop_down = true;
+								
+					}
+				
+
+					return false;
+		}
+		else {
+	//	alert("check");
+		console.log("turnin true :")
+	
+	
+	
+		//storing only block value touched down
+		storeBlockValues();	
+		checkRowClearLine();
+		//curShapes_array.length=0;
+		curShape.stop_down = true;
+		}
+	}	
+	
+	function checkRowClearLine()
+	{
+for (var i = rowCount - 1; i >= 0; i--)
+		 {
+		 	var count = 0;
+		for (var j = 0; j <= colCount-1; j++) 
+		{
+
+			
+		
+		//	console.log("i "+i+" j "+j);
+			var pos=i+":"+j;
+			//console.log("VALUE  :"+pos);
+			var check= main_array.indexOf(pos);
+			console.log("CHECK  :"+check);
+			console.log(main_array);
+
+			if(typeof main_array[check] === 'undefined') {
+				   console.log("empty spaces found on line");			// doesnt find retuns -1
+				   
+				}
+				else {
+				    console.log("found positon");			//finds position returns piece positon
+				    count +=1;
+				    console.log("count "+count);
+				}
+
+			}
+			if(count == colCount-2){
+				console.log("before "+main_array);
+				alert("10 occurences");
+				 main_array.splice(0,colCount);
+				console.log(" after "+main_array);
+					alert("check");
+					main_array.unshift(null,null,null,null,null,null,null,null,null,null);
+					main_array.toString();	
+					alert("chck_addded");
+			}
+																			/*		 if(count == 8)
+																						    {
+																						    	alert("found 8 matching");
+																						    }
+																						    else{};*/
+		}	//alert("Done");   end of one line
+	}	
+	
+
+/*var array1 = ["t0","t1","t2","t3","t4","t5"];
+console.log(array1);
+array1 = array1.concat(array1.splice(0,3));
+console.log(array1);
+results in
+
+["t0", "t1", "t2", "t3", "t4", "t5"]
+["t3", "t4", "t5", "t0", "t1", "t2"]*/
+	
+	
+	function storeBlockValues()
+	{
+	main_array.push(curShape.piece_1[0]+":"+curShape.piece_1[1]);
+	main_array.push(curShape.piece_2[0]+":"+curShape.piece_2[1]);
+	main_array.push(curShape.piece_3[0]+":"+curShape.piece_3[1]);
+	main_array.push(curShape.piece_4[0]+":"+curShape.piece_4[1]);
+	console.log(main_array.toString());
+	}
+
+function update(){
+
+clearPrevShapeTrace();
+
+curShape.piece_1[0]+=1;
+curShape.piece_2[0]+=1;
+curShape.piece_3[0]+=1;
+curShape.piece_4[0]+=1;
+
+}
+
+function draw(){	
+	
+		rowWise = grep_row[curShape.piece_1[0]].cells;
+	rowWise[curShape.piece_1[1]].style.backgroundColor=curShape.color;
+
+	rowWise = grep_row[curShape.piece_2[0]].cells;	
+	rowWise[curShape.piece_2[1]].style.backgroundColor=curShape.color;
+	
+	rowWise = grep_row[curShape.piece_3[0]].cells;
+	rowWise[curShape.piece_3[1]].style.backgroundColor=curShape.color;
+	
+	rowWise = grep_row[curShape.piece_4[0]].cells;
+	rowWise[curShape.piece_4[1]].style.backgroundColor=curShape.color;
+	
+}
+
+
+	function rotate(){
+
+
+
+	}
+
+
+window.addEventListener("keydown",checkKey);
+function checkKey(e) {
+
+	e = e || window.event;
+
+    if (e.keyCode == '38') {
+        // up arrow ,rotate
+		console.log("rotate_plz");
+    }
+    else if (e.keyCode == '40') {
+        // down arrow
+		console.log("down");
+    }
+    else if (e.keyCode == '37')  {
+       // left arrow
+	    clearPrevShapeTrace();
+		moveLeft();
+		
+    }
+    else if (e.keyCode == '39') {
+       // right arrow
+	   clearPrevShapeTrace();
+		moveRight();
+
+    }
+
+}
+
+function moveRight(){
+		var max_val_piece = Math.max(curShape.piece_1[1],curShape.piece_2[1],curShape.piece_3[1],curShape.piece_4[1]);
+	// || max_val_piece 
+	// 20:5 RE,RE1,RE2,RE3 
+	//find its existance in mainarray
+	//if yes retun false 
+			
+		if(max_val_piece < colCount-1) {
+		
+		move_right=true;
+		
+		curShape.piece_1[1]+=1;
+		curShape.piece_2[1]+=1;
+		curShape.piece_3[1]+=1;
+		curShape.piece_4[1]+=1;
+		}
+		else{
+			move_right=false;
+		}
+/*
+	var_1=main_array.indexOf(curShape.piece_1[0]+":"+curShape.piece_1[1]+1);
+					var_2=main_array.indexOf(curShape.piece_2[0]+":"+curShape.piece_2[1]+1);
+					var_3=main_array.indexOf(curShape.piece_3[0]+":"+curShape.piece_3[1]+1);
+					var_4=main_array.indexOf(curShape.piece_4[0]+":"+curShape.piece_4[1]+1);
+					
+	console.log("var 1"+var_1+"var 2"+var_2+" var 3 "+var_3+" var_4"+var_4);
+
+	if( ( (var_1 != -1 )|| (var_2 != -1 )||( var_3 != -1)||( var_4 != -1) ) || (max_val_piece >= colCount-1) ) 
+			{
+		console.log("i got element");
+			move_right=false;
+		}
+		else{
+		//	move_right=true;
+		
+		curShape.piece_1[1]+=1;
+		curShape.piece_2[1]+=1;
+		curShape.piece_3[1]+=1;
+		curShape.piece_4[1]+=1;
+		}*/
+
+}
+
+function moveLeft(){
+var min_val_piece=Math.min(curShape.piece_1[1],curShape.piece_2[1],curShape.piece_3[1],curShape.piece_4[1]);		
+	
+		if( min_val_piece >= 1)
+		{
+		move_left=true;
+		curShape.piece_1[1]-=1;
+		curShape.piece_2[1]-=1;
+		curShape.piece_3[1]-=1;
+		curShape.piece_4[1]-=1;
+		}
+		else{
+			move_left=false;
+		}
+}
+
+function clearPrevShapeTrace(){
+
+		rowWise = grep_row[curShape.piece_1[0]].cells;
+	rowWise[curShape.piece_1[1]].style.backgroundColor=" #444";
+
+	rowWise = grep_row[curShape.piece_2[0]].cells;	
+	rowWise[curShape.piece_2[1]].style.backgroundColor=" #444";
+	
+	rowWise = grep_row[curShape.piece_3[0]].cells;
+	rowWise[curShape.piece_3[1]].style.backgroundColor=" #444";
+	
+	rowWise = grep_row[curShape.piece_4[0]].cells;
+	rowWise[curShape.piece_4[1]].style.backgroundColor=" #444";
+	
+
+
+}
+
+ function generateNewShape(){
+
+ // decideing the shape
+ 				
+ var shapes = ["L_shape","T_shape","Z_shape","line_shape","box_shape","ulta7_shape","S_shape"]
+ var shapeIndex= Math.floor(Math.random() *shapes.length);
+
+ var generateShape = shapes[shapeIndex];
+ console.log(" shape is "+generateShape);
+ 
+	 // color to blocks
+var colors = ["green", "yellow", "red","blue","orange","purple"];
+ var colorsIndex= Math.floor(Math.random() *colors.length);
+ var applyColor = colors[colorsIndex];
+ 
+ switch(generateShape){
+	
+	case 'L_shape':
+			
+			L_shape.piece_1[0]=1;
+			L_shape.piece_2[0]=2;
+			L_shape.piece_3[0]=3;L_shape.piece_4[0]=3;
+			L_shape.piece_1[1]=L_shape.piece_2[1]=L_shape.piece_3[1]=piecePos;
+			L_shape.piece_4[1]=piecePos+1;
+			L_shape.color=applyColor;
+			L_shape.stop_down=false;
+			
+			return L_shape;	
+			
+		break;
+		
+	case 'Z_shape':
+			Z_shape.piece_1[0]=Z_shape.piece_2[0]=1;
+			Z_shape.piece_1[1]=piecePos;
+			Z_shape.piece_2[1]=piecePos+1;
+			Z_shape.piece_3[0]=Z_shape.piece_4[0]=2;
+			Z_shape.piece_3[1]=piecePos+1;
+			Z_shape.piece_4[1]=piecePos+2;
+			Z_shape.color=applyColor;
+			Z_shape.stop_down=false;
+				
+			return Z_shape;			
+		break;
+		
+	case 'line_shape':
+			
+			line_shape.piece_1[0]=line_shape.piece_2[0]=line_shape.piece_3[0]=line_shape.piece_4[0]=1;
+			line_shape.piece_1[1]=piecePos;
+			line_shape.piece_2[1]=piecePos+1;
+			line_shape.piece_3[1]=piecePos+2;
+			line_shape.piece_4[1]=piecePos+3;
+			line_shape.color=applyColor;
+			line_shape.stop_down=false;
+
+			return line_shape;	
+		break;
+		
+	case 'box_shape':
+			
+			box_shape.piece_1[0]=box_shape.piece_2[0]=1;
+			box_shape.piece_1[1]=piecePos;
+			box_shape.piece_2[1]=piecePos+1;
+			box_shape.piece_3[0]=box_shape.piece_4[0]=2;			
+			box_shape.piece_3[1]=piecePos;
+			box_shape.piece_4[1]=piecePos+1;
+			box_shape.color=applyColor;
+			box_shape.stop_down=false;
+
+			return box_shape;	
+		break;	
+		
+	case 'T_shape':
+			
+			T_shape.piece_1[0]=T_shape.piece_2[0]=T_shape.piece_3[0]=1;
+						T_shape.piece_4[0]=2;
+						
+			T_shape.piece_1[1]=piecePos;
+			T_shape.piece_2[1]=piecePos+1;
+			T_shape.piece_3[1]=piecePos+2;
+			T_shape.piece_4[1]=piecePos+1;
+			T_shape.color=applyColor;
+			T_shape.stop_down=false;
+		
+			
+			return T_shape;
+		break;
+		
+	case 'ulta7_shape':	
+					
+			  ulta7_shape.piece_1[0]=ulta7_shape.piece_2[0]=1;
+			  ulta7_shape.piece_3[0]=2;
+			  ulta7_shape.piece_4[0]=3;
+			  ulta7_shape.piece_1[1]=ulta7_shape.piece_3[1]=ulta7_shape.piece_4[1]=piecePos;
+			ulta7_shape.piece_2[1]=piecePos+1;
+			ulta7_shape.color=applyColor;
+			ulta7_shape.stop_down=false;
+			return ulta7_shape;
+		break;
+		
+		case 'S_shape':
+			S_shape.piece_1[0]=S_shape.piece_2[0]=1;
+			S_shape.piece_1[1]=piecePos+2;
+			S_shape.piece_2[1]=piecePos+1;
+			S_shape.piece_3[0]=S_shape.piece_4[0]=2;
+			S_shape.piece_3[1]=piecePos+1;
+			S_shape.piece_4[1]=piecePos;
+			S_shape.color=applyColor;
+			S_shape.stop_down=false;
+				
+			return S_shape;			
+		break;
+	default:
+		break;
+ }
+
+}
+</script>
+<div id="Block" style="margin: auto auto;">
+
+		<div id="Block1" style="float: left">
+				<table id="nextBlock" "style="width=100px;" height="100px;" border="1px;"">
+				<tr>
+				<td></td> <td> </td><td></td> <td> </td>		<td> </td><td></td><td></td><td></td> <td> </td><td></td>
+				</tr>
+				<tr>
+				<td ></td> <td> </td><td></td> <td> </td>			<td> </td><td></td><td></td><td></td> <td> </td><td></td>
+				</tr>
+				 <tr>
+				<td></td> <td></td><td></td> <td> </td>			<td> </td><td></td><td></td><td></td> <td> </td><td></td>
+				</tr>
+				 <tr>
+				<td></td> <td></td><td></td> <td> </td> 		<td> </td><td></td><td></td><td></td> <td> </td><td></td>
+				</tr>
+				 <tr>
+				<td></td> <td></td><td></td> <td> </td> 		<td> </td><td></td><td></td><td></td> <td> </td><td></td>
+				</tr>
+				</table>
+		</div>
+		
+<div id="Block2" style="float:left;">
+		<table id="playArea" "style="width=200px;" height="400px;" border="1px;" ">
+		<!-- remove tr with class and also a normal tr-->
+		<tr class="collapse">
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr class="collapse">
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr class="collapse">
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr class="collapse">
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		 <tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td ></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		 <tr>
+		<td></td> <td></td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		<tr>
+		<td ></td> <td> </td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		 <tr>
+		<td></td> <td></td><td></td> <td> </td> <td> </td><td></td><td></td><td></td> <td> </td><td></td>
+		</tr>
+		</table>
+	</div>
+</div>
+   
+<button onclick="mainLoop()">Play</button>
+<button onclick="myFunction()">Start again</button>
+
+</body>
+</html>
